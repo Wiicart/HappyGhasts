@@ -1,0 +1,51 @@
+package com.pedestriamc.ghasts.listener;
+
+import com.pedestriamc.ghasts.FastHappyGhast;
+import com.pedestriamc.ghasts.enchantment.EnchantmentManager;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.HappyGhast;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityMountEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
+public class EntityMountListener implements Listener {
+
+    private final EnchantmentManager manager;
+
+    public EntityMountListener(@NotNull FastHappyGhast plugin) {
+        manager = plugin.getManager();
+    }
+
+    @EventHandler
+    void onEvent(@NotNull EntityMountEvent event) {
+        Entity entity = event.getMount();
+        if (!(entity instanceof HappyGhast ghast)) {
+            return;
+        }
+
+        int level = getEnchantmentLevelIfPresent(ghast.getEquipment().getItem(EquipmentSlot.BODY));
+        AttributeInstance attribute = ghast.getAttribute(Attribute.FLYING_SPEED);
+        if (attribute != null) {
+            attribute.setBaseValue(manager.getSpeed(level));
+        }
+    }
+
+    /**
+     * Provides the harness's enchantment level if present.
+     * @return The harness's enchantment level, otherwise -1.
+     */
+    private int getEnchantmentLevelIfPresent(@NotNull ItemStack itemStack) {
+        Enchantment enchantment = manager.getEnchantment();
+        if (itemStack.getEnchantments().containsKey(enchantment)) {
+            return itemStack.getEnchantments().get(enchantment);
+        }
+
+        return -1;
+    }
+}

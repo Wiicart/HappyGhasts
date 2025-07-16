@@ -6,5 +6,8 @@
 ## Configuration
 Configuration is in the plugins folder at `Ghasts/config.yml`. Nearly every aspect is customizable, including speeds, the enchantment's name, cost & frequency.
 
+## Getting the Enchantment
+The enchantment is available in enchantment tables and the creative inventory.
+
 ## Demo (Click)
 [![Watch on YouTube](https://img.youtube.com/vi/Q2lEWF8hUPs/maxresdefault.jpg)](https://www.youtube.com/watch?v=Q2lEWF8hUPs)

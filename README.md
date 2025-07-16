@@ -6,5 +6,5 @@
 ## Configuration
 Configuration is in the plugins folder at `Ghasts/config.yml`. Nearly every aspect is customizable, including speeds, the enchantment's name, cost & frequency.
 
-## Demo
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/Q2lEWF8hUPs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+## Demo (Click)
+[![Watch on YouTube](https://img.youtube.com/vi/Q2lEWF8hUPs/maxresdefault.jpg)](https://www.youtube.com/watch?v=Q2lEWF8hUPs)

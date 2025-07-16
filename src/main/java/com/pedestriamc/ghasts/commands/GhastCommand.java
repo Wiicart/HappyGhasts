@@ -1,29 +1,35 @@
 package com.pedestriamc.ghasts.commands;
 
 import com.pedestriamc.ghasts.Ghasts;
+import com.pedestriamc.ghasts.messages.Message;
+import com.pedestriamc.ghasts.messages.Messenger;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.permissions.Permissible;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
+import java.util.Map;
+
+@SuppressWarnings("all")
 public class GhastCommand implements CommandExecutor {
 
-    private static final Component PREFIX = Component
-            .text("[").color(NamedTextColor.DARK_GRAY)
-            .append(Component.text("Ghasts")).color(NamedTextColor.WHITE)
-            .append(Component.text("] ").color(NamedTextColor.DARK_GRAY));
+    private final Ghasts plugin;
+    private final Messenger messenger;
 
-    private static final Component VERSION_MESSAGE = PREFIX
-            .append(Component.text("Running Ghasts version")).color(NamedTextColor.WHITE)
-            .append(Component.text(Ghasts.VERSION)).color(NamedTextColor.GREEN);
-
-    private static final Component RELOAD_NOT_SUPPORTED = PREFIX
-            .append(Component.text("Reloading is not supported, please restart instead.")).color(NamedTextColor.WHITE);
+    private final Component helpMessage;
 
     public GhastCommand(@NotNull Ghasts plugin) {
-
+        this.plugin = plugin;
+        messenger = plugin.getMessenger();
+        helpMessage = MiniMessage.miniMessage().deserialize(plugin.getConfig().getString("messages.help"));
     }
 
     @Override
@@ -31,33 +37,71 @@ public class GhastCommand implements CommandExecutor {
         switch (args.length) {
             case 1 -> oneArg(sender, args);
             case 2 -> twoArgs(sender, args);
-            default -> sendDefaultMessage(sender);
+            default -> sendVersionMessage(sender);
         }
 
         return true;
     }
 
-    private void sendDefaultMessage(@NotNull CommandSender sender) {
-        sender.sendMessage(VERSION_MESSAGE);
+    private void sendVersionMessage(@NotNull CommandSender sender) {
+        messenger.sendMessage(sender, Message.PLUGIN_VERSION, Map.of("{version}", Ghasts.VERSION));
     }
 
+    // Expected args: help, reload, givebook, version
     private void oneArg(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (args[0].equalsIgnoreCase("reload") && hasReloadPermission(sender)) {
-            sender.sendMessage(RELOAD_NOT_SUPPORTED);
-        }
+        switch (args[0].toLowerCase(Locale.ROOT)) {
+            case "help" -> {
+                if (hasPermission(sender, "ghasts.manage")) {
+                    sender.sendMessage(helpMessage);
+                } else {
+                    messenger.sendMessage(sender, Message.NO_PERMISSION);
+                }
+            }
+            case "reload" -> {
+                if (hasPermission(sender, "ghasts.reload")) {
+                    messenger.sendMessage(sender, Message.RELOAD_UNSUPPORTED);
+                } else {
+                    messenger.sendMessage(sender, Message.NO_PERMISSION);
+                }
+            }
+            case "givebook" -> {
+                if (hasPermission(sender, "ghasts.givebook")) {
+                    if (!(sender instanceof Player player)) {
+                        messenger.sendMessage(sender, Message.CONSOLE_MUST_DEFINE_PLAYER);
+                        return;
+                    }
 
-        sendDefaultMessage(sender);
+                    player.give(createBook(1, 1));
+                    Map<String, String> map = Map.of("{quantity}", "1", "{player}", sender.getName());
+                    messenger.sendMessage(sender, Message.BOOK_GIVEN, map);
+                } else {
+                    messenger.sendMessage(sender, Message.NO_PERMISSION);
+                }
+            }
+            default -> sendVersionMessage(sender);
+        }
     }
 
     private void twoArgs(@NotNull CommandSender sender, @NotNull String[] args) {
+        if (args[0].equalsIgnoreCase("givebook") && hasPermission(sender, "ghasts.givebook")) {
 
+        }
     }
 
-    private boolean hasReloadPermission(@NotNull CommandSender sender) {
-        return sender.isOp() ||
-                sender.hasPermission("*") ||
-                sender.hasPermission("ghasts.*") ||
-                sender.hasPermission("ghasts.reload");
+    private @NotNull ItemStack createBook(int level, int amount) {
+        ItemStack stack = ItemStack.of(Material.ENCHANTED_BOOK).asQuantity(amount);
+        ItemMeta meta = stack.getItemMeta();
+        meta.addEnchant(plugin.getManager().getEnchantment(), level, true);
+        stack.setItemMeta(meta);
+
+        return stack;
+    }
+
+    private boolean hasPermission(@NotNull Permissible permissible, @NotNull String permission) {
+        return permissible.isOp() ||
+                permissible.hasPermission("*") ||
+                permissible.hasPermission("ghasts.*") ||
+                permissible.hasPermission(permission);
     }
 
 }

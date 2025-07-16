@@ -2,21 +2,28 @@ package com.pedestriamc.ghasts.enchantment;
 
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import io.papermc.paper.plugin.bootstrap.PluginBootstrap;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import io.papermc.paper.registry.RegistryKey;
+import io.papermc.paper.registry.TypedKey;
 import io.papermc.paper.registry.data.EnchantmentRegistryEntry.EnchantmentCost;
 import io.papermc.paper.registry.event.RegistryEvents;
 import io.papermc.paper.registry.keys.EnchantmentKeys;
+import io.papermc.paper.registry.keys.tags.EnchantmentTagKeys;
 import io.papermc.paper.registry.keys.tags.ItemTypeTagKeys;
+import io.papermc.paper.tag.TagEntry;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Set;
 
 // https://docs.papermc.io/paper/dev/registries/#mutating-registries
 @SuppressWarnings({"unused", "UnstableApiUsage"})
@@ -27,8 +34,8 @@ public class EnchantmentBootstrapper implements PluginBootstrap {
     }
 
     // Attempts to get the max enchantment level from the config, returns 3 if no levels are found.
-    private int getMaxLevel(@NotNull FileConfiguration config) {
-        ConfigurationSection enchantments = config.getConfigurationSection("enchantments");
+    public static int getMaxLevel(@NotNull FileConfiguration config) {
+        ConfigurationSection enchantments = config.getConfigurationSection("enchantment.levels");
         if (enchantments == null) {
             return 3;
         }
@@ -51,24 +58,34 @@ public class EnchantmentBootstrapper implements PluginBootstrap {
     public void bootstrap(@NotNull BootstrapContext context) {
         EnchantmentData data = getData(context.getDataDirectory());
 
+        TypedKey<Enchantment> key = EnchantmentKeys.create(Key.key(data.keyString()));
         context.getLifecycleManager().registerEventHandler(
-                RegistryEvents.ENCHANTMENT.compose().newHandler(event -> event.registry().register(
-                        EnchantmentKeys.create(Key.key(data.keyString())),
-                        builder -> builder
-                                .description(Component.text(data.description()))
-                                .maxLevel(data.maxLevel())
-                                .weight(data.weight())
-                                .minimumCost(data.minCost())
-                                .maximumCost(data.maxCost())
-                                .anvilCost(data.anvilCost())
-                                .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.HARNESSES))
-                                .primaryItems(event.getOrCreateTag(ItemTypeTagKeys.HARNESSES))
-                                .activeSlots(EquipmentSlotGroup.ANY)
-                        )
-                )
+                RegistryEvents.ENCHANTMENT.compose().newHandler(event -> {
+                    event.registry().register(
+                            key, builder -> builder
+                                    .description(Component.text(data.description()))
+                                    .maxLevel(data.maxLevel())
+                                    .weight(data.weight())
+                                    .minimumCost(data.minCost())
+                                    .maximumCost(data.maxCost())
+                                    .anvilCost(data.anvilCost())
+                                    .supportedItems(event.getOrCreateTag(ItemTypeTagKeys.HARNESSES))
+                                    .primaryItems(event.getOrCreateTag(ItemTypeTagKeys.HARNESSES))
+                                    .activeSlots(EquipmentSlotGroup.ANY)
+                    );
+                    System.out.println("[Ghasts] Registered enchantment " + data.keyString);
+                })
         );
 
-        System.out.println("[Ghasts] Registered enchantment " + data.keyString);
+        Set<TagEntry<Enchantment>> set = Set.of(TagEntry.valueEntry(key));
+        context.getLifecycleManager().registerEventHandler(
+                LifecycleEvents.TAGS.preFlatten(RegistryKey.ENCHANTMENT).newHandler(event -> {
+                    event.registrar().addToTag(EnchantmentTagKeys.IN_ENCHANTING_TABLE, set);
+                    event.registrar().addToTag(EnchantmentTagKeys.TRADEABLE, set);
+                    event.registrar().addToTag(EnchantmentTagKeys.ON_TRADED_EQUIPMENT, set);
+                    System.out.println("[Ghasts] Added enchantment to registries");
+                })
+        );
     }
 
     /**
@@ -87,8 +104,8 @@ public class EnchantmentBootstrapper implements PluginBootstrap {
                     config.getString("enchantment.description", "Velocity"),
                     getMaxLevel(config),
                     config.getInt("enchantment.weight"),
-                    EnchantmentCost.of(config.getInt("enchantment.cost.minimum", 3), config.getInt("enchantment.cost.minimum-modifier", 3)),
-                    EnchantmentCost.of(config.getInt("enchantment.cost.maximum", 5), config.getInt("enchantment.cost.maximum-modifier", 3)),
+                    EnchantmentCost.of(config.getInt("enchantment.cost.minimum", 1), config.getInt("enchantment.cost.minimum-modifier", 11)),
+                    EnchantmentCost.of(config.getInt("enchantment.cost.maximum", 15), config.getInt("enchantment.cost.maximum-modifier", 10)),
                     config.getInt("enchantment.cost.anvil")
             );
         } else {
@@ -97,9 +114,9 @@ public class EnchantmentBootstrapper implements PluginBootstrap {
                     "pedestria:velocity",
                     "Velocity",
                     3,
-                    10,
-                    EnchantmentCost.of(3, 3),
-                    EnchantmentCost.of(5, 3),
+                    3,
+                    EnchantmentCost.of(1, 11),
+                    EnchantmentCost.of(15, 10),
                     3
             );
         }
@@ -119,7 +136,7 @@ public class EnchantmentBootstrapper implements PluginBootstrap {
 
         @Override
         public int weight() {
-            return weight > 0 && weight <= 1024 ? weight : 10;
+            return weight > 0 && weight <= 1024 ? weight : 3;
         }
     }
 }

@@ -6,3 +6,7 @@ prefix: Ghasts
 author: wiicart
 description: Happy Ghast enhancements
 website: wiicart.net
+commands:
+  ghasts:
+    description: "Provides the Ghasts plugin version"
+    usage: "/ghasts"

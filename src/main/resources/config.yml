@@ -20,20 +20,43 @@ enchantment:
   # Weight
   # How common should the enchantment be?
   # Range: 1 - 1024
-  weight: 10
+  weight: 3
 
   # Enchantment Cost (XP levels)
   cost:
     anvil: 3 # The cost to add the enchantment to a harness with an anvil
 
-    minimum: 3 # The minimum cost for the lowest level
-    minimum-modifier: 3 # The amount the minimum goes up by for each enchantment level
+    minimum: 1 # The minimum cost for the lowest level
+    minimum-modifier: 11 # The amount the minimum goes up by for each enchantment level
 
-    maximum: 5 # The maximum cost for the lowest level
-    maximum-modifier: 3 # The amount the maximum goes up for each enchantment level
+    maximum: 15 # The maximum cost for the lowest level
+    maximum-modifier: 10 # The amount the maximum goes up for each enchantment level
 
   # What each level enchantment should set the happy ghast's speed to:
+  # Speed Range: 0-1
   levels:
     1: 0.20 # This means enchantment level I gives Happy Ghasts a speed of 0.20
     2: 0.30
     3: 0.40
+
+# Plugin messages
+# Uses MiniMessage
+# Editor: https://webui.advntr.dev
+messages:
+  # The prefix before all messages
+  prefix: "<dark_gray>[<white>Ghasts</white>]</dark_gray> "
+
+  # Message sent when console issues a command without defining a player
+  console-insufficient: "<white>Console must define a player to use this command.</white>"
+  # The message sent when a player uses /ghasts givebook
+  book-given: "<white>Gave <gray>{quantity}</gray> books to <gray>{player}</gray></white>"
+  # Plugin version message
+  plugin-version: "<white>Running Ghasts version <green>{version}</green></white>"
+  # Reload not supported message
+  reload-unsupported: "<white>Reloading is not supported, please restart instead.</white>"
+  # Help Message
+  help: "<dark_gray>+-------[<white>Ghasts</white>]-------+</dark_gray>
+<white><gray>•</gray> /version - Provides the version
+<gray>•</gray> /givebook <level> <quantity> <player> - Gives an enchanted book</white>"
+  # No Permission
+  no-perms: "<red>No permission!</red>"

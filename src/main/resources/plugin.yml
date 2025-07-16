@@ -1,8 +1,8 @@
-name: FastHappyGhast
+name: Ghasts
 version: '1.0'
 main: com.pedestriamc.ghasts.FastHappyGhast
-api-version: '1.21'
-prefix: Strings
-authors: [ wiicart ]
-description: A lightweight chat plugin
+api-version: '1.21.6'
+prefix: Ghasts
+author: wiicart
+description: Happy Ghast enhancements
 website: wiicart.net

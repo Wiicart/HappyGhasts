@@ -1,0 +1,9 @@
+bootstrapper: com.pedestriamc.ghasts.enchantment.EnchantmentBootstrapper
+name: Ghasts
+version: '1.0'
+main: com.pedestriamc.ghasts.Ghasts
+api-version: '1.21'
+prefix: Ghasts
+author: wiicart
+description: Happy Ghast enhancements
+website: wiicart.net

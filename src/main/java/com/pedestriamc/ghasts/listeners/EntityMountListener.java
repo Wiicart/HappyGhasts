@@ -1,6 +1,6 @@
-package com.pedestriamc.ghasts.listener;
+package com.pedestriamc.ghasts.listeners;
 
-import com.pedestriamc.ghasts.FastHappyGhast;
+import com.pedestriamc.ghasts.Ghasts;
 import com.pedestriamc.ghasts.enchantment.EnchantmentManager;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -18,7 +18,7 @@ public class EntityMountListener implements Listener {
 
     private final EnchantmentManager manager;
 
-    public EntityMountListener(@NotNull FastHappyGhast plugin) {
+    public EntityMountListener(@NotNull Ghasts plugin) {
         manager = plugin.getManager();
     }
 

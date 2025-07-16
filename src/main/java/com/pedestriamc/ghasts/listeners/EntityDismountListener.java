@@ -1,6 +1,6 @@
-package com.pedestriamc.ghasts.listener;
+package com.pedestriamc.ghasts.listeners;
 
-import com.pedestriamc.ghasts.FastHappyGhast;
+import com.pedestriamc.ghasts.Ghasts;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.HappyGhast;
@@ -13,7 +13,7 @@ public class EntityDismountListener implements Listener {
 
     private final double idleSpeed;
 
-    public EntityDismountListener(@NotNull FastHappyGhast plugin) {
+    public EntityDismountListener(@NotNull Ghasts plugin) {
         idleSpeed = plugin.getManager().getIdleSpeed();
     }
 

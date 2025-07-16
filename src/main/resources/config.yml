@@ -1,0 +1,39 @@
+# Fast Happy Ghast
+# author: wiicart
+# wiicart.net
+
+# Default riding speed
+default-riding-speed: 0.10
+
+# The speed when no player is mounted
+idle-speed: 0.01
+
+# Options for the Happy Ghast speed enchantment
+enchantment:
+  # Name
+  name: "velocity"
+
+  # Description
+  # (how it will show up on a harness when hovering on it in an inventory)
+  description: "Velocity"
+
+  # Weight
+  # How common should the enchantment be?
+  # Range: 1 - 1024
+  weight: 10
+
+  # Enchantment Cost (XP levels)
+  cost:
+    anvil: 3 # The cost to add the enchantment to a harness with an anvil
+
+    minimum: 3 # The minimum cost for the lowest level
+    minimum-modifier: 3 # The amount the minimum goes up by for each enchantment level
+
+    maximum: 5 # The maximum cost for the lowest level
+    maximum-modifier: 3 # The amount the maximum goes up for each enchantment level
+
+  # What each level enchantment should set the happy ghast's speed to:
+  levels:
+    1: 0.20 # This means enchantment level I gives Happy Ghasts a speed of 0.20
+    2: 0.30
+    3: 0.40

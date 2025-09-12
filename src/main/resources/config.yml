@@ -3,7 +3,8 @@
 # wiicart.net
 
 # Default riding speed
-default-riding-speed: 0.10
+# (Vanilla is 0.05)
+default-riding-speed: 0.05
 
 # The speed when no player is mounted
 idle-speed: 0.01
@@ -35,9 +36,9 @@ enchantment:
   # What each level enchantment should set the happy ghast's speed to:
   # Speed Range: 0-1
   levels:
-    1: 0.20 # This means enchantment level I gives Happy Ghasts a speed of 0.20
-    2: 0.30
-    3: 0.40
+    1: 0.1 # This means enchantment level I gives Happy Ghasts a speed of 0.20
+    2: 0.15
+    3: 0.17
 
 # Plugin messages
 # Uses MiniMessage
@@ -55,8 +56,23 @@ messages:
   # Reload not supported message
   reload-unsupported: "<white>Reloading is not supported, please restart instead.</white>"
   # Help Message
-  help: "<dark_gray>+-------[<white>Ghasts</white>]-------+</dark_gray>
-<white><gray>•</gray> /version - Provides the version
+  help: "<dark_gray>+-------[<white>Ghasts</white>]-------+</dark_gray><newLine>
+<white><gray>•</gray> /version - Provides the version<newLine>
 <gray>•</gray> /givebook <level> <quantity> <player> - Gives an enchanted book</white>"
   # No Permission
   no-perms: "<red>No permission!</red>"
+  # Sent when a player attempts to enchant an invalid item
+  invalid-item: "<red>Invalid item, you must be holding a book or harness.</red>"
+  # Sent when a player attempts to enchant an item with an invalid enchantment level
+  # Placeholder: {max} - the max enchantment level
+  invalid-level: "<red>Invalid enchantment level. Must be from 0 to {max}</red>"
+  # Sent when a player attempts to run a command with too many args
+  too-many-args: "<red>Too many args!</red>"
+  # Sent when an item is enchanted with /ghasts enchant
+  # Placeholders:
+  # {item} - the item that has been enchanted
+  # {enchantment} - the enchantment that has been applied
+  enchant-success: "<gray>Enchanted {item} with {enchantment}.</gray>"
+  # Tells the plugin version
+  # Placeholder: {version} - The plugin version
+  version: "<light-gray>Running EnchantedHarnesses version <green>{version}</green></light-gray>"

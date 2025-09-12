@@ -12,16 +12,19 @@ import java.util.Map;
 
 public class Messenger {
 
-    private final EnumMap<Message, String> map = new EnumMap<>(Message.class);
+    private final EnumMap<Message, Component> map = new EnumMap<>(Message.class);
+
+    private final Component prefix;
 
     public Messenger(@NotNull FileConfiguration config) {
-        String prefix = config.getString("messages.prefix", "<dark_gray>[<white>Ghasts</white>]</dark_gray> ");
+        String prefixString = config.getString("messages.prefix", "<dark_gray>[<white>Ghasts</white>]</dark_gray> ");
+        prefix = MiniMessage.miniMessage().deserialize(prefixString);
         for (Message message : Message.values()) {
-            String string = config.getString(message.getKey());
-            if (string != null) {
-                map.put(message, prefix + string);
+            String raw = config.getString(message.key());
+            if (raw != null) {
+                map.put(message, deserialize(raw));
             } else {
-                map.put(message, prefix + message.getFallback());
+                map.put(message, deserialize(message.fallback()));
             }
         }
     }
@@ -30,14 +33,38 @@ public class Messenger {
         sendMessage(audience, message, Collections.emptyMap());
     }
 
-    public void sendMessage(@NotNull Audience audience, @NotNull Message message, @NotNull Map<String, String> placeholders) {
-        String raw = map.get(message);
-        for (Map.Entry<String, String> entry : placeholders.entrySet()) {
-            raw = raw.replace(entry.getKey(), entry.getValue());
+    public void sendMessage(@NotNull Audience audience, @NotNull Message message, @NotNull Map<String, Component> placeholders) {
+        sendMessage(audience, prefix.append(map.get(message)), placeholders);
+    }
+
+    public void sendMessageNoPrefix(@NotNull Audience audience, @NotNull Message message) {
+        sendMessageNoPrefix(audience, message, Collections.emptyMap());
+    }
+
+    public void sendMessageNoPrefix(@NotNull Audience audience, @NotNull Message message, @NotNull Map<String, Component> placeholders) {
+        sendMessage(audience, map.get(message), placeholders);
+    }
+
+
+    public Component prefix() {
+        return prefix;
+    }
+
+    private void sendMessage(@NotNull Audience audience, @NotNull Component component, @NotNull Map<String, Component> placeholders) {
+        for (Map.Entry<String, Component> entry : placeholders.entrySet()) {
+            component = component.replaceText(builder -> builder
+                    .matchLiteral(entry.getKey())
+                    .replacement(entry.getValue())
+            );
         }
 
-        Component component = MiniMessage.miniMessage().deserialize(raw);
         audience.sendMessage(component);
     }
+
+    @NotNull
+    private Component deserialize(@NotNull String raw) {
+        return MiniMessage.miniMessage().deserialize(raw);
+    }
+
 
 }

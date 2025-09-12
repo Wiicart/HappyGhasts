@@ -1,19 +1,24 @@
 package com.pedestriamc.ghasts;
 
+import com.pedestriamc.ghasts.commands.main.GhastsBukkitCommand;
 import com.pedestriamc.ghasts.enchantment.EnchantmentManager;
 import com.pedestriamc.ghasts.listeners.EntityDismountListener;
 import com.pedestriamc.ghasts.listeners.EntityMountListener;
 import com.pedestriamc.ghasts.listeners.PrepareItemEnchantListener;
 import com.pedestriamc.ghasts.messages.Messenger;
+import com.tchristofferson.configupdater.ConfigUpdater;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.IOException;
+
 public final class Ghasts extends JavaPlugin {
 
-    public static final String VERSION = "1.0";
+    public static final String VERSION = "1.1";
 
     public static final int METRICS_ID = 26530;
 
@@ -24,10 +29,11 @@ public final class Ghasts extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        getLogger().info("Loading...");
+        updateConfig();
         saveDefaultConfig();
         manager = new EnchantmentManager(this);
         messenger = new Messenger(getConfig());
-        getLogger().info("Loading...");
     }
 
     @Override
@@ -36,6 +42,7 @@ public final class Ghasts extends JavaPlugin {
         registerListener(new EntityMountListener(this));
         registerListener(new PrepareItemEnchantListener(this));
         new Metrics(this, METRICS_ID);
+        registerGhastsCommand();
         getLogger().info("Enabled.");
     }
 
@@ -58,4 +65,25 @@ public final class Ghasts extends JavaPlugin {
     private void registerListener(@NotNull Listener listener) {
         getServer().getPluginManager().registerEvents(listener, this);
     }
+
+    // https://forums.papermc.io/threads/cant-register-command.802/
+    private void registerGhastsCommand() {
+        try {
+            getServer().getCommandMap().register("ghasts", new GhastsBukkitCommand(this));
+        } catch(Exception e) {
+            getLogger().warning("Failed to register /ghasts command.");
+        }
+    }
+
+    private void updateConfig() {
+        File file = new File(getDataFolder(), "config.yml");
+        if (file.exists()) {
+            try {
+                ConfigUpdater.update(this, "config.yml", file);
+            } catch(IOException e) {
+                getLogger().warning("Failed to update config.yml");
+            }
+        }
+    }
+
 }

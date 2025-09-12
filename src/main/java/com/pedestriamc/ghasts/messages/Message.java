@@ -7,7 +7,12 @@ public enum Message {
     PLUGIN_VERSION("messages.plugin-version", "<white>Running Ghasts version <green>{version}</green></white>"),
     RELOAD_UNSUPPORTED("messages.reload-unsupported", "<white>Reloading is not supported, please restart instead.</white>"),
     CONSOLE_MUST_DEFINE_PLAYER("messages.console-insufficient", "<white>Console must define a player to use this command.</white>"),
-    NO_PERMISSION("messages.no-perms", "<red>No permission!</red>");
+    NO_PERMISSION("messages.no-perms", "<red>No permission!</red>"),
+    HELP("messages.help", "Help message not found"),
+    INVALID_ITEM("messages.invalid-item", "<red>You must be holding an un-enchanted book or a harness.</red>"),
+    INVALID_LEVEL("messages.invalid-level", "Invalid enchantment level. Must be from 0 to {max}"),
+    TOO_MANY_ARGS("messages.too-many-args", "<red>Too many args!</red>"),
+    VERSION("messages.version", "<light-gray>Running EnchantedHarnesses version <green>{version}</green></light-gray>");
 
     private final String key;
     private final String fallback;
@@ -17,11 +22,11 @@ public enum Message {
         this.fallback = fallback;
     }
 
-    public String getKey() {
+    public String key() {
         return key;
     }
 
-    public String getFallback() {
+    public String fallback() {
         return fallback;
     }
 }

@@ -1,5 +1,5 @@
 name: Ghasts
-version: '1.0'
+version: '1.1'
 main: com.pedestriamc.ghasts.FastHappyGhast
 api-version: '1.21.6'
 prefix: Ghasts
@@ -10,3 +10,6 @@ commands:
   ghasts:
     description: "Provides the Ghasts plugin version"
     usage: "/ghasts"
+permissions:
+  ghasts.enchant:
+    description: "Allows usage of the /ghasts enchant command"

@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 
 @SuppressWarnings("all")
+@Deprecated
 public class GhastCommand implements CommandExecutor {
 
     private final Ghasts plugin;
@@ -44,7 +45,7 @@ public class GhastCommand implements CommandExecutor {
     }
 
     private void sendVersionMessage(@NotNull CommandSender sender) {
-        messenger.sendMessage(sender, Message.PLUGIN_VERSION, Map.of("{version}", Ghasts.VERSION));
+        messenger.sendMessage(sender, Message.PLUGIN_VERSION, Map.of("{version}", Component.text(Ghasts.VERSION)));
     }
 
     // Expected args: help, reload, givebook, version
@@ -72,7 +73,7 @@ public class GhastCommand implements CommandExecutor {
                     }
 
                     player.give(createBook(1, 1));
-                    Map<String, String> map = Map.of("{quantity}", "1", "{player}", sender.getName());
+                    Map<String, Component> map = Map.of("{quantity}", Component.text(1), "{player}", Component.text(sender.getName()));
                     messenger.sendMessage(sender, Message.BOOK_GIVEN, map);
                 } else {
                     messenger.sendMessage(sender, Message.NO_PERMISSION);
